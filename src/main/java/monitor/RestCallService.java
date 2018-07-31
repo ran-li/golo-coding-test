@@ -18,7 +18,16 @@ public class RestCallService {
 	}
 
 	public DataPoint singleRequest(String url) {
-		MonitorResult res = restTemplate.getForObject(url, MonitorResult.class);
+		MonitorResult res = null;
+		
+		try {
+			res = restTemplate.getForObject(url, MonitorResult.class);
+		} catch (Exception e) {
+			res = new MonitorResult();
+			res.setStatus(e.getMessage());
+			return new DataPoint(res);
+		}
+		
 		logger.info(res.toString());
 		return new DataPoint(res);
 	}

@@ -1,5 +1,6 @@
 package monitor;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,22 +25,21 @@ public class MonitorController {
     		@RequestParam("url") String url) {
     	//todo: this is not thread safe...
     	if (sessions.containsKey(url)) {
-    		return "url: " + url + "is already being monitored!";
+    		return "url: " + url + " is already being monitored!";
     	} else {
     		MonitoringSession sesh = createSession();
     		sesh.setInterval(interval);
     		sesh.setUrl(url);
     		sesh.start();
     		sessions.put(url, sesh);
-    	}    	
+    	}
         return "Monitoring successfully started at " + url
         		+ "; monitor data is collected every " + interval + " seconds.";
     }
     
     @RequestMapping("/stop")
     public String stoptMonitoring(@RequestParam("url") String url) {
-    	//todo: check if url has not been started
-    	if (sessions.contains(url)) {
+    	if (sessions.containsKey(url)) {
         	sessions.get(url).stop();
         	sessions.remove(url);
             return "Stopped monitoring " + url;
@@ -51,7 +51,7 @@ public class MonitorController {
     @RequestMapping("/summary")
     public Map<String, List<DataPoint>> reportSummary() {
     	//todo: thread safety
-    	Map<String, List<DataPoint>> result = new ConcurrentHashMap<>();
+    	Map<String, List<DataPoint>> result = new HashMap<>();
     	for (String url : sessions.keySet()) {
     		result.put(url, sessions.get(url).getSessionData());
     	}    	

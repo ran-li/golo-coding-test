@@ -49,7 +49,8 @@ public class MonitoringSession {
 
 	public void stop() {
 		requestorHandle.cancel(true);
-		status = Status.stopped;		
+		status = Status.stopped;
+		logger.info("Stopped monitoring " + url);
 	}
 	
 	public ArrayList<DataPoint> getSessionData() {
